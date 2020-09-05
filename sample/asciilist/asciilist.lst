@@ -1,4 +1,4 @@
- AS V1.42 Beta [Bld 162] - Source File asciilist.asm - Page 1 - 2020/09/05 17時09分35秒
+ AS V1.42 Beta [Bld 162] - Source File asciilist.asm - Page 1 - 2020/09/05 17時30分46秒
 
 
        1/       0 :                     ;
@@ -43,19 +43,21 @@
       40/     11B : 26 F8                       BNE     VRAM_CLR_LOOP
       41/     11D : 39                          RTS
       42/     11E :                     ;
-      43/     11E :                     CHAR_PRINT:
-      44/     11E : CE A0 00                    LDX     #VRAM_TOP
-      45/     121 : 86 00                       LDAA    #0
-      46/     123 :                     CHAR_PRINT_LOOP:
-      47/     123 : A7 00                       STAA    0,X
-      48/     125 : 4C                          INCA
-      49/     126 : 08                          INX
-      50/     127 : 8C A2 00                    CPX     #VRAM_END
-      51/     12A : 26 F7                       BNE     CHAR_PRINT_LOOP
-      52/     12C : 39                          RTS
-      53/     12D :                     ;
-      54/     12D :                             END
- AS V1.42 Beta [Bld 162] - Source File asciilist.asm - Page 2 - 2020/09/05 17時09分35秒
+      43/     11E :                     ; 全キャラクター表示
+      44/     11E :                     ;
+      45/     11E :                     CHAR_PRINT:
+      46/     11E : CE A0 00                    LDX     #VRAM_TOP
+      47/     121 : 86 00                       LDAA    #0
+      48/     123 :                     CHAR_PRINT_LOOP:
+      49/     123 : A7 00                       STAA    0,X
+      50/     125 : 4C                          INCA
+      51/     126 : 08                          INX
+      52/     127 : 8C A2 00                    CPX     #VRAM_END
+      53/     12A : 26 F7                       BNE     CHAR_PRINT_LOOP
+      54/     12C : 39                          RTS
+      55/     12D :                     ;
+      56/     12D :                             END
+ AS V1.42 Beta [Bld 162] - Source File asciilist.asm - Page 2 - 2020/09/05 17時30分46秒
 
 
   Symbol Table (* = unused):
@@ -76,7 +78,7 @@
 *NESTMAX :                      100 - | *PACKING :                        0 - |
 *PADDING :                        0 - | *RELAXED :                        0 - |
  SPC :                           20 - | *TARGET :                    MC6800 - |
-*TIME :                 17\-026\-103\-12609\-027\-120\-12235\-025\-089\-110 - |
+*TIME :                 17\-026\-103\-12630\-027\-120\-12246\-025\-089\-110 - |
 *TRUE :                           1 - |  VDG_CTL_AD :                  8110 - |
  VDG_INIT :                     10A C |  VDG_MODE :                       0 - |
 *VERSION :                     142F - |  VRAM_CLR :                     110 C |
@@ -86,7 +88,7 @@
      40 symbols
      30 unused symbols
 
- AS V1.42 Beta [Bld 162] - Source File asciilist.asm - Page 3 - 2020/09/05 17時09分35秒
+ AS V1.42 Beta [Bld 162] - Source File asciilist.asm - Page 3 - 2020/09/05 17時30分46秒
 
 
   Code Pages:
@@ -96,9 +98,9 @@ STANDARD (0 changed characters)
 
 1 code page
 
-0.05 seconds assembly time
+0.03 seconds assembly time
 
-     54 lines source file
+     56 lines source file
       2 passes
       0 errors
       0 warnings

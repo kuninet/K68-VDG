@@ -40,6 +40,8 @@ VRAM_CLR_LOOP:
         BNE     VRAM_CLR_LOOP
         RTS
 ;
+; 全キャラクター表示
+;
 CHAR_PRINT:
         LDX     #VRAM_TOP
         LDAA    #0
