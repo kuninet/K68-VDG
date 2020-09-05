@@ -1,5 +1,6 @@
 ;
 ; MC6847 All ASCII CHAR List 
+;   for SBC6800+SBC Adapter
 ;
         
 	CPU	6800
