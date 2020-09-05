@@ -1,0 +1,104 @@
+ AS V1.42 Beta [Bld 162] - Source File asciilist.asm - Page 1 - 2020/09/05 17時09分35秒
+
+
+       1/       0 :                     ;
+       2/       0 :                     ; MC6847 All ASCII CHAR List 
+       3/       0 :                     ;
+       4/       0 :                             
+       5/       0 :                     	CPU	6800
+       6/       0 :                     
+       7/       0 : =MC6800             TARGET:	equ	"MC6800"
+       8/       0 :                     
+       9/     100 :                             org     $0100
+      10/     100 :                     ;
+      11/     100 : =$A000              VRAM_TOP        EQU     $A000
+      12/     100 : =$A200              VRAM_END        EQU     $A200
+      13/     100 : =$20                SPC             EQU     $20
+      14/     100 :                     ;
+      15/     100 : =$0                 VDG_MODE        EQU     %00000000
+      16/     100 : =$8110              VDG_CTL_AD      EQU     $8110
+      17/     100 :                     ;
+      18/     100 :                     MAIN:
+      19/     100 : BD 01 0A                    JSR     VDG_INIT
+      20/     103 : BD 01 10                    JSR     VRAM_CLR
+      21/     106 : BD 01 1E                    JSR     CHAR_PRINT
+      22/     109 : 3F                          SWI
+      23/     10A :                     ;
+      24/     10A :                     ; MC6747初期化
+      25/     10A :                     ;
+      26/     10A :                     VDG_INIT:
+      27/     10A : 86 00                       LDAA    #VDG_MODE
+      28/     10C : B7 81 10                    STAA    VDG_CTL_AD
+      29/     10F : 39                          RTS
+      30/     110 :                     ;
+      31/     110 :                     ; VRAMクリア
+      32/     110 :                     ;
+      33/     110 :                     VRAM_CLR:
+      34/     110 : CE A0 00                    LDX #VRAM_TOP
+      35/     113 : 86 20                       LDAA #SPC
+      36/     115 :                     VRAM_CLR_LOOP:
+      37/     115 : A7 00                       STAA 0,X
+      38/     117 : 08                          INX
+      39/     118 : 8C A2 00                    CPX     #VRAM_END
+      40/     11B : 26 F8                       BNE     VRAM_CLR_LOOP
+      41/     11D : 39                          RTS
+      42/     11E :                     ;
+      43/     11E :                     CHAR_PRINT:
+      44/     11E : CE A0 00                    LDX     #VRAM_TOP
+      45/     121 : 86 00                       LDAA    #0
+      46/     123 :                     CHAR_PRINT_LOOP:
+      47/     123 : A7 00                       STAA    0,X
+      48/     125 : 4C                          INCA
+      49/     126 : 08                          INX
+      50/     127 : 8C A2 00                    CPX     #VRAM_END
+      51/     12A : 26 F7                       BNE     CHAR_PRINT_LOOP
+      52/     12C : 39                          RTS
+      53/     12D :                     ;
+      54/     12D :                             END
+ AS V1.42 Beta [Bld 162] - Source File asciilist.asm - Page 2 - 2020/09/05 17時09分35秒
+
+
+  Symbol Table (* = unused):
+  --------------------------
+
+*ARCHITECTURE :    x86_64-apple-osx - | *BIGENDIAN :                      0 - |
+*BRANCHEXT :                      0 - | *CASESENSITIVE :                  0 - |
+ CHAR_PRINT :                   11E C |  CHAR_PRINT_LOOP :              123 C |
+*CONSTPI :        3.141592653589793 - | *DATE :                  2020/09/05 - |
+*FALSE :                          0 - | *FULLPMMU :                       1 - |
+*HAS64 :                          1 - | *HASDSP :                         0 - |
+*HASFPU :                         0 - | *HASPMMU :                        0 - |
+*INEXTMODE :                      0 - | *INLWORDMODE :                    0 - |
+*INMAXMODE :                      0 - | *INSRCMODE :                      0 - |
+*INSUPMODE :                      0 - | *LISTON :                         1 - |
+*MACEXP :                         7 - | *MAIN :                         100 C |
+*MOMCPU :                      6800 - | *MOMCPUNAME :                  6800 - |
+*NESTMAX :                      100 - | *PACKING :                        0 - |
+*PADDING :                        0 - | *RELAXED :                        0 - |
+ SPC :                           20 - | *TARGET :                    MC6800 - |
+*TIME :                 17\-026\-103\-12609\-027\-120\-12235\-025\-089\-110 - |
+*TRUE :                           1 - |  VDG_CTL_AD :                  8110 - |
+ VDG_INIT :                     10A C |  VDG_MODE :                       0 - |
+*VERSION :                     142F - |  VRAM_CLR :                     110 C |
+ VRAM_CLR_LOOP :                115 C |  VRAM_END :                    A200 - |
+ VRAM_TOP :                    A000 - |
+
+     40 symbols
+     30 unused symbols
+
+ AS V1.42 Beta [Bld 162] - Source File asciilist.asm - Page 3 - 2020/09/05 17時09分35秒
+
+
+  Code Pages:
+  ----------
+
+STANDARD (0 changed characters)
+
+1 code page
+
+0.05 seconds assembly time
+
+     54 lines source file
+      2 passes
+      0 errors
+      0 warnings
