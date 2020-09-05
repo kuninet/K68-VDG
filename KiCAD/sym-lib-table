@@ -1,0 +1,5 @@
+(sym_lib_table
+  (lib (name 6522-51)(type Legacy)(uri /Volumes/USB4TB/@@@Box/github/K65-IOB/KiCAD/6522-51.lib)(options "")(descr ""))
+  (lib (name MC6847-1372)(type Legacy)(uri ${KIPRJMOD}/MC6847-1372.lib)(options "")(descr ""))
+  (lib (name K68-VDG-rescue)(type Legacy)(uri ${KIPRJMOD}/K68-VDG-rescue.lib)(options "")(descr ""))
+)
