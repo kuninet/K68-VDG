@@ -1,8 +1,8 @@
- AS V1.42 Beta [Bld 162] - Source File echoback-6800.asm - Page 1 - 2020/09/05 22時35分00秒
+ AS V1.42 Beta [Bld 162] - Source File echoback-6800.asm - Page 1 - 2020/09/07 21時35分22秒
 
 
        1/       0 :                     ;
-       2/       0 :                     ; エコーバック
+       2/       0 :                     ; MV6847 ビデオボード エコーバック
        3/       0 :                     ;  for SBC6800+SBC adapter & universal Monitor
        4/       0 :                     ;
        5/       0 :                     	CPU	6800
@@ -15,10 +15,10 @@
       12/     100 : =$A200              VRAM_END        EQU     $A200
       13/     100 : =$A1E0              VRAM_SCREND     EQU     VRAM_END-$20
       14/     100 :                     ;
-      15/     100 : =$20                SPC             EQU     $20
+      15/     100 : =$60                SPC             EQU     $60
       16/     100 : =$1B                ESC             EQU     $1B
       17/     100 : =$D                 CR              EQU     $0D
-      18/     100 : =$8F                CURSOR          EQU     $8F
+      18/     100 : =$CF                CURSOR          EQU     $CF
       19/     100 :                     ;
       20/     100 : =$40                CHAR_A          EQU     $40
       21/     100 : =$5F                CHAR_UNS        EQU     $5F
@@ -34,11 +34,11 @@
       31/     100 :                     
       32/     100 :                     MAIN:
       33/     100 : CE A0 00                    LDX     #VRAM_TOP
-      34/     103 : FF 01 A1                    STX     WK_VRAM
-      35/     106 : BD 01 91                    JSR     DISP_CURSOR
-      36/     109 :                     ;
-      37/     109 : BD 01 13                    JSR     VDG_INIT
-      38/     10C : BD 01 19                    JSR     VRAM_CLR
+      34/     103 : FF 01 B7                    STX     WK_VRAM
+      35/     106 :                     ;
+      36/     106 : BD 01 13                    JSR     VDG_INIT
+      37/     109 : BD 01 19                    JSR     VRAM_CLR
+      38/     10C : BD 01 A7                    JSR     DISP_CURSOR
       39/     10F : BD 01 27                    JSR     ECHO
       40/     112 : 3F                          SWI
       41/     113 :                     ;
@@ -53,7 +53,7 @@
       50/     119 :                     ;
       51/     119 :                     VRAM_CLR:
       52/     119 : CE A0 00                    LDX #VRAM_TOP
-      53/     11C : 86 20                       LDAA #SPC
+      53/     11C : 86 60                       LDAA #SPC
       54/     11E :                     VRAM_CLR_LOOP:
       55/     11E : A7 00                       STAA 0,X
       56/     120 : 08                          INX
@@ -61,7 +61,7 @@
       58/     124 : 26 F8                       BNE     VRAM_CLR_LOOP
       59/     126 : 39                          RTS
       60/     127 :                     ;
- AS V1.42 Beta [Bld 162] - Source File echoback-6800.asm - Page 2 - 2020/09/05 22時35分00秒
+ AS V1.42 Beta [Bld 162] - Source File echoback-6800.asm - Page 2 - 2020/09/07 21時35分22秒
 
 
       61/     127 :                     ; キー入力エコー
@@ -69,128 +69,154 @@
       63/     127 :                     ECHO:
       64/     127 : BD E7 5D                    JSR     CONIN
       65/     12A : 81 1B                       CMPA    #ESC
-      66/     12C : 27 08                       BEQ     ECHO_END
+      66/     12C : 27 1E                       BEQ     ECHO_END
       67/     12E : BD E7 6E                    JSR     CONOUT
-      68/     131 : BD 01 37                    JSR     VRAM_OUT
-      69/     134 : 20 F1                       BRA     ECHO
-      70/     136 :                     ECHO_END:
-      71/     136 : 39                          RTS
-      72/     137 :                     ;
-      73/     137 :                     VRAM_OUT:
-      74/     137 : 81 0D                       CMPA    #CR
-      75/     139 : 27 37                       BEQ     VRAM_CR
-      76/     13B :                     ;
-      77/     13B : FE 01 A1                    LDX     WK_VRAM
-      78/     13E : A7 00                       STAA    0,X
-      79/     140 : 86 8F                       LDAA    #CURSOR
-      80/     142 : A7 01                       STAA    1,X
-      81/     144 : 08                          INX
-      82/     145 : FF 01 A1                    STX     WK_VRAM
-      83/     148 : 8C A2 00                    CPX     #VRAM_END
-      84/     14B : 26 43                       BNE     VRAM_OUT_END
-      85/     14D :                     ;
-      86/     14D :                     VRAM_SCR1:
-      87/     14D : CE A0 00                    LDX     #VRAM_TOP
-      88/     150 : FF 01 A1                    STX     WK_VRAM
-      89/     153 :                     VRAM_SCR:
-      90/     153 : A6 20                       LDAA    $20,X
-      91/     155 : A7 00                       STAA    0,X
-      92/     157 : 08                          INX
-      93/     158 : 8C A1 E0                    CPX     #VRAM_SCREND
-      94/     15B : 26 F6                       BNE     VRAM_SCR
-      95/     15D :                     ;
-      96/     15D : 86 20                       LDAA    #SPC
-      97/     15F :                     LINE_CLR:
-      98/     15F : A7 00                       STAA    0,X
-      99/     161 : 08                          INX
-     100/     162 : 8C A2 00                    CPX     #VRAM_END
-     101/     165 : 26 F8                       BNE     LINE_CLR
-     102/     167 : CE A1 E0                    LDX     #VRAM_SCREND
-     103/     16A : FF 01 A1                    STX     WK_VRAM
-     104/     16D : BD 01 91                    JSR     DISP_CURSOR
-     105/     170 : 20 1E                       BRA     VRAM_OUT_END
-     106/     172 :                     ;
-     107/     172 :                     VRAM_CR:
-     108/     172 : BD 01 99                    JSR     CLR_CURSOR
-     109/     175 :                     ;
-     110/     175 : B6 01 A2                    LDAA    WK_VRAM+1
-     111/     178 : 84 E0                       ANDA    #$E0
-     112/     17A : F6 01 A1                    LDAB    WK_VRAM
-     113/     17D : 8B 20                       ADDA    #$20
-     114/     17F : C9 00                       ADCB    #0
-     115/     181 : C1 A2                       CMPB    #$A2
-     116/     183 : 27 C8                       BEQ     VRAM_SCR1
-     117/     185 : F7 01 A1                    STAB    WK_VRAM
-     118/     188 : B7 01 A2                    STAA    WK_VRAM+1
-     119/     18B : BD 01 91                    JSR     DISP_CURSOR
-     120/     18E : 20 00                       BRA     VRAM_OUT_END
- AS V1.42 Beta [Bld 162] - Source File echoback-6800.asm - Page 3 - 2020/09/05 22時35分00秒
+      68/     131 :                     ;
+      69/     131 :                     ; 内部CGにあわせて キャラクターコード変換
+      70/     131 :                     ;
+      71/     131 : 81 60                       CMPA    #$60
+      72/     133 : 2C 0A                       BGE     SUB20
+      73/     135 : 81 40                       CMPA    #$40
+      74/     137 : 2C 0E                       BGE     ECHO1
+      75/     139 : 81 20                       CMPA    #$20
+      76/     13B : 2C 06                       BGE     ADD40
+      77/     13D : 20 08                       BRA     ECHO1
+      78/     13F :                     SUB20:
+      79/     13F : 80 20                       SUBA    #$20
+      80/     141 : 20 04                       BRA     ECHO1
+      81/     143 :                     ADD40:
+      82/     143 : 8B 40                       ADDA    #$40
+      83/     145 : 20 00                       BRA     ECHO1
+      84/     147 :                     ECHO1:
+      85/     147 : BD 01 4D                    JSR     VRAM_OUT
+      86/     14A : 20 DB                       BRA     ECHO
+      87/     14C :                     ;
+      88/     14C :                     ECHO_END:
+      89/     14C : 39                          RTS
+      90/     14D :                     ;
+      91/     14D :                     ; VRAM出力ルーチン
+      92/     14D :                     ;
+      93/     14D :                     VRAM_OUT:
+      94/     14D : 81 0D                       CMPA    #CR
+      95/     14F : 27 37                       BEQ     VRAM_CR
+      96/     151 :                     ;
+      97/     151 : FE 01 B7                    LDX     WK_VRAM
+      98/     154 : A7 00                       STAA    0,X
+      99/     156 : 86 CF                       LDAA    #CURSOR
+     100/     158 : A7 01                       STAA    1,X
+     101/     15A : 08                          INX
+     102/     15B : FF 01 B7                    STX     WK_VRAM
+     103/     15E : 8C A2 00                    CPX     #VRAM_END       ; 画面右下まできた?
+     104/     161 : 26 43                       BNE     VRAM_OUT_END
+     105/     163 :                     ;
+     106/     163 :                     ; スクロール処理
+     107/     163 :                     ;
+     108/     163 :                     VRAM_SCR1:
+     109/     163 : CE A0 00                    LDX     #VRAM_TOP
+     110/     166 : FF 01 B7                    STX     WK_VRAM
+     111/     169 :                     VRAM_SCR:
+     112/     169 : A6 20                       LDAA    $20,X
+     113/     16B : A7 00                       STAA    0,X
+     114/     16D : 08                          INX
+     115/     16E : 8C A1 E0                    CPX     #VRAM_SCREND
+     116/     171 : 26 F6                       BNE     VRAM_SCR
+     117/     173 :                     ;
+     118/     173 : 86 60                       LDAA    #SPC
+     119/     175 :                     LINE_CLR:
+     120/     175 : A7 00                       STAA    0,X
+ AS V1.42 Beta [Bld 162] - Source File echoback-6800.asm - Page 3 - 2020/09/07 21時35分22秒
 
 
-     121/     190 :                     ;
-     122/     190 :                     VRAM_OUT_END:
-     123/     190 : 39                          RTS
-     124/     191 :                     ;
-     125/     191 :                     ; カーソル表示
-     126/     191 :                     ;
-     127/     191 :                     DISP_CURSOR:
-     128/     191 : 86 8F                       LDAA    #CURSOR
-     129/     193 : FE 01 A1                    LDX     WK_VRAM
-     130/     196 : A7 00                       STAA    0,X
-     131/     198 : 39                          RTS
-     132/     199 :                     ;
-     133/     199 :                     ; カーソル消去
-     134/     199 :                     ;
-     135/     199 :                     CLR_CURSOR:
-     136/     199 : 86 20                       LDAA    #SPC
-     137/     19B : FE 01 A1                    LDX     WK_VRAM
-     138/     19E : A7 00                       STAA    0,X
-     139/     1A0 : 39                          RTS
-     140/     1A1 :                     ;
-     141/     1A1 : 02                  WK_VRAM FCB     2
-     142/     1A2 :                     ;
-     143/     1A2 :                             END
- AS V1.42 Beta [Bld 162] - Source File echoback-6800.asm - Page 4 - 2020/09/05 22時35分00秒
+     121/     177 : 08                          INX
+     122/     178 : 8C A2 00                    CPX     #VRAM_END
+     123/     17B : 26 F8                       BNE     LINE_CLR
+     124/     17D : CE A1 E0                    LDX     #VRAM_SCREND
+     125/     180 : FF 01 B7                    STX     WK_VRAM
+     126/     183 : BD 01 A7                    JSR     DISP_CURSOR
+     127/     186 : 20 1E                       BRA     VRAM_OUT_END
+     128/     188 :                     ;
+     129/     188 :                     ; CR($0D)が押されたら改行処理
+     130/     188 :                     ;
+     131/     188 :                     VRAM_CR:
+     132/     188 : BD 01 AF                    JSR     CLR_CURSOR
+     133/     18B :                     ;
+     134/     18B : B6 01 B8                    LDAA    WK_VRAM+1
+     135/     18E : 84 E0                       ANDA    #$E0
+     136/     190 : F6 01 B7                    LDAB    WK_VRAM
+     137/     193 : 8B 20                       ADDA    #$20
+     138/     195 : C9 00                       ADCB    #0
+     139/     197 : C1 A2                       CMPB    #$A2            ; VRAMはみ出す?
+     140/     199 : 27 C8                       BEQ     VRAM_SCR1       ; スクロール処理へ
+     141/     19B : F7 01 B7                    STAB    WK_VRAM
+     142/     19E : B7 01 B8                    STAA    WK_VRAM+1
+     143/     1A1 : BD 01 A7                    JSR     DISP_CURSOR
+     144/     1A4 : 20 00                       BRA     VRAM_OUT_END
+     145/     1A6 :                     ;
+     146/     1A6 :                     VRAM_OUT_END:
+     147/     1A6 : 39                          RTS
+     148/     1A7 :                     ;
+     149/     1A7 :                     ; カーソル表示
+     150/     1A7 :                     ;
+     151/     1A7 :                     DISP_CURSOR:
+     152/     1A7 : 86 CF                       LDAA    #CURSOR
+     153/     1A9 : FE 01 B7                    LDX     WK_VRAM
+     154/     1AC : A7 00                       STAA    0,X
+     155/     1AE : 39                          RTS
+     156/     1AF :                     ;
+     157/     1AF :                     ; カーソル消去
+     158/     1AF :                     ;
+     159/     1AF :                     CLR_CURSOR:
+     160/     1AF : 86 60                       LDAA    #SPC
+     161/     1B1 : FE 01 B7                    LDX     WK_VRAM
+     162/     1B4 : A7 00                       STAA    0,X
+     163/     1B6 : 39                          RTS
+     164/     1B7 :                     ;
+     165/     1B7 : 02                  WK_VRAM FCB     2
+     166/     1B8 :                     ;
+     167/     1B8 :                             END
+ AS V1.42 Beta [Bld 162] - Source File echoback-6800.asm - Page 4 - 2020/09/07 21時35分22秒
 
 
   Symbol Table (* = unused):
   --------------------------
 
-*ARCHITECTURE :    x86_64-apple-osx - | *BIGENDIAN :                      0 - |
-*BRANCHEXT :                      0 - | *CASESENSITIVE :                  0 - |
-*CHAR_A :                        40 - | *CHAR_END :                      7F - |
-*CHAR_S_A :                      60 - | *CHAR_UNS :                      5F - |
- CLR_CURSOR :                   199 C |  CONIN :                       E75D - |
- CONOUT :                      E76E - | *CONSTPI :        3.141592653589793 - |
- CR :                             D - |  CURSOR :                        8F - |
-*DATE :                  2020/09/05 - |  DISP_CURSOR :                  191 C |
- ECHO :                         127 C |  ECHO_END :                     136 C |
+ ADD40 :                        143 C | *ARCHITECTURE :    x86_64-apple-osx - |
+*BIGENDIAN :                      0 - | *BRANCHEXT :                      0 - |
+*CASESENSITIVE :                  0 - | *CHAR_A :                        40 - |
+*CHAR_END :                      7F - | *CHAR_S_A :                      60 - |
+*CHAR_UNS :                      5F - |  CLR_CURSOR :                   1AF C |
+ CONIN :                       E75D - |  CONOUT :                      E76E - |
+*CONSTPI :        3.141592653589793 - |  CR :                             D - |
+ CURSOR :                        CF - | *DATE :                  2020/09/07 - |
+ DISP_CURSOR :                  1A7 C |  ECHO :                         127 C |
+ ECHO1 :                        147 C |  ECHO_END :                     14C C |
  ESC :                           1B - | *FALSE :                          0 - |
 *FULLPMMU :                       1 - | *HAS64 :                          1 - |
 *HASDSP :                         0 - | *HASFPU :                         0 - |
 *HASPMMU :                        0 - | *INEXTMODE :                      0 - |
 *INLWORDMODE :                    0 - | *INMAXMODE :                      0 - |
 *INSRCMODE :                      0 - | *INSUPMODE :                      0 - |
- LINE_CLR :                     15F C | *LISTON :                         1 - |
+ LINE_CLR :                     175 C | *LISTON :                         1 - |
 *MACEXP :                         7 - | *MAIN :                         100 C |
 *MOMCPU :                      6800 - | *MOMCPUNAME :                  6800 - |
 *NESTMAX :                      100 - | *PACKING :                        0 - |
 *PADDING :                        0 - | *RELAXED :                        0 - |
- SPC :                           20 - | *TARGET :                    MC6800 - |
-*TIME :                 22\-026\-103\-12635\-027\-120\-12200\-025\-089\-110 - |
+ SPC :                           60 - |  SUB20 :                        13F C |
+*TARGET :                    MC6800 - |
+*TIME :                 21\-026\-103\-12635\-027\-120\-12222\-025\-089\-110 - |
 *TRUE :                           1 - |  VDG_CTL_AD :                  8110 - |
  VDG_INIT :                     113 C |  VDG_MODE :                       0 - |
 *VERSION :                     142F - |  VRAM_CLR :                     119 C |
- VRAM_CLR_LOOP :                11E C |  VRAM_CR :                      172 C |
- VRAM_END :                    A200 - |  VRAM_OUT :                     137 C |
- VRAM_OUT_END :                 190 C |  VRAM_SCR :                     153 C |
- VRAM_SCR1 :                    14D C |  VRAM_SCREND :                 A1E0 - |
- VRAM_TOP :                    A000 - |  WK_VRAM :                      1A1 C |
+ VRAM_CLR_LOOP :                11E C |  VRAM_CR :                      188 C |
+ VRAM_END :                    A200 - |  VRAM_OUT :                     14D C |
+ VRAM_OUT_END :                 1A6 C |  VRAM_SCR :                     169 C |
+ VRAM_SCR1 :                    163 C |  VRAM_SCREND :                 A1E0 - |
+ VRAM_TOP :                    A000 - |  WK_VRAM :                      1B7 C |
 
-     59 symbols
+     62 symbols
      34 unused symbols
 
- AS V1.42 Beta [Bld 162] - Source File echoback-6800.asm - Page 5 - 2020/09/05 22時35分00秒
+ AS V1.42 Beta [Bld 162] - Source File echoback-6800.asm - Page 5 - 2020/09/07 21時35分22秒
 
 
   Code Pages:
@@ -200,9 +226,9 @@ STANDARD (0 changed characters)
 
 1 code page
 
-0.12 seconds assembly time
+0.08 seconds assembly time
 
-    144 lines source file
+    168 lines source file
       2 passes
       0 errors
       0 warnings

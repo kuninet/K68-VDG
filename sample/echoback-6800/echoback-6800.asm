@@ -1,5 +1,5 @@
 ;
-; エコーバック
+; MV6847 ビデオボード エコーバック
 ;  for SBC6800+SBC adapter & universal Monitor
 ;
 	CPU	6800
@@ -12,10 +12,10 @@ VRAM_TOP        EQU     $A000
 VRAM_END        EQU     $A200
 VRAM_SCREND     EQU     VRAM_END-$20
 ;
-SPC             EQU     $20
+SPC             EQU     $60
 ESC             EQU     $1B
 CR              EQU     $0D
-CURSOR          EQU     $8F
+CURSOR          EQU     $CF
 ;
 CHAR_A          EQU     $40
 CHAR_UNS        EQU     $5F
@@ -32,10 +32,10 @@ CONOUT          EQU     $E76E
 MAIN:
         LDX     #VRAM_TOP
         STX     WK_VRAM
-        JSR     DISP_CURSOR
 ;
         JSR     VDG_INIT
         JSR     VRAM_CLR
+        JSR     DISP_CURSOR
         JSR     ECHO
         SWI
 ;
@@ -65,10 +65,30 @@ ECHO:
         CMPA    #ESC
         BEQ     ECHO_END
         JSR     CONOUT
+;
+; 内部CGにあわせて キャラクターコード変換
+;
+        CMPA    #$60
+        BGE     SUB20
+        CMPA    #$40
+        BGE     ECHO1
+        CMPA    #$20
+        BGE     ADD40
+        BRA     ECHO1
+SUB20:
+        SUBA    #$20
+        BRA     ECHO1
+ADD40:
+        ADDA    #$40
+        BRA     ECHO1
+ECHO1:
         JSR     VRAM_OUT
         BRA     ECHO
+;
 ECHO_END:
         RTS
+;
+; VRAM出力ルーチン
 ;
 VRAM_OUT:
         CMPA    #CR
@@ -80,8 +100,10 @@ VRAM_OUT:
         STAA    1,X
         INX
         STX     WK_VRAM
-        CPX     #VRAM_END
+        CPX     #VRAM_END       ; 画面右下まできた?
         BNE     VRAM_OUT_END
+;
+; スクロール処理
 ;
 VRAM_SCR1:
         LDX     #VRAM_TOP
@@ -104,6 +126,8 @@ LINE_CLR:
         JSR     DISP_CURSOR
         BRA     VRAM_OUT_END
 ;
+; CR($0D)が押されたら改行処理
+;
 VRAM_CR:
         JSR     CLR_CURSOR
 ;
@@ -112,8 +136,8 @@ VRAM_CR:
         LDAB    WK_VRAM
         ADDA    #$20
         ADCB    #0
-        CMPB    #$A2
-        BEQ     VRAM_SCR1
+        CMPB    #$A2            ; VRAMはみ出す?
+        BEQ     VRAM_SCR1       ; スクロール処理へ
         STAB    WK_VRAM
         STAA    WK_VRAM+1
         JSR     DISP_CURSOR
