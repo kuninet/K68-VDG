@@ -1,3 +1,4 @@
 (fp_lib_table
   (lib (name MC6847-1372)(type KiCad)(uri ${KIPRJMOD}/MC6847-1372.pretty)(options "")(descr ""))
+  (lib (name RCA)(type KiCad)(uri ${KIPRJMOD}/RCA.pretty)(options "")(descr ""))
 )

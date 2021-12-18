@@ -9,8 +9,8 @@ TARGET:	equ	"MC6800"
 
         org     $0100
 ;
-VRAM_TOP        EQU     $A000
-VRAM_END        EQU     $A200
+VRAM_TOP        EQU     $C000
+VRAM_END        EQU     $C200
 SPC             EQU     $20
 ;
 VDG_MODE        EQU     %00000000

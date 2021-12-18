@@ -4,7 +4,7 @@
 
 .SUFFIXES: .asm .p .hex .sr
 
-all:	asciilist.hex
+all:	asciilist.hex asciilist.sr
 
 .p.hex:
 	p2hex -F Intel $*.p $*.hex
