@@ -6,9 +6,10 @@
 ; MIKBUG関係
 ;
 INEEE    EQU $E1AC   ; MIKBUG シリアル入力
-SPSAVE   EQU $A008   ; SPセーブ域
-BEGAD    EQU $A004   ; PRINT/PUNCH開始アドレス
+BEGAD    EQU $A002   ; PRINT/PUNCH開始アドレス
 ENDAD    EQU $A004   ; PRINT/PUNCH最終アドレス
+xxxxx    EQU $A006   ; 
+SPSAVE   EQU $A008   ; SPセーブ域
 INCNT    EQU $A00E   ; CHAR COUNT (INADD)
 TEMP1    EQU $A00F   ; ?
 ;
@@ -73,14 +74,36 @@ P5:
   CPX   VRAMLAST
   BNE   P5
   RTS
-; 
-
-
-
+;
 H4:
-
+  BSR D2
+H2:
+  BSR D2
+SP:
+  LDAA #$20      ; SPACE
+  BRA  CH
+D2:
+  LDA 0,X
+  PSH A
+  LSR A
+  LSR A
+  LSR A
+  LSR A
+  BSR AS
+  PUL A
+  AND #$0F
+  BSR AS
+  INX
+  RTS
+AS:
+  SUB A,#$9
+  BGT CH
+  ADD A,#$39
 CH:
-
+  STX SPSAVE
+  LDX ENDAD
+  STX 0,X
+  INX
 Q1:
   STX  ENDAD 
 Q2:
@@ -97,8 +120,27 @@ B1:
   JSR  OT
   CLRB
   STX  INCNT
+  LDA  A,INCNT
   JSR  D2
+  ;
   LDAA TEMP1
   JSR  D2
   JSR  SP
+  DEX
+  DEX
+  NOP
+  JSR  H2
+  CPX  #$A006
+  BEQ  ED
+  CMP  #$07
+  BEQ  B3
+  INC  B
+  BRA  B2
+ED:
+  SWI
+B3:
+  JSR  SP
+  JSR  SP
+  JSR  SP
+  BRA  B1
 
