@@ -69,10 +69,13 @@ ECHO:
 ;
 ; 内部CGにあわせて キャラクターコード変換
 ;
+; 英小文字は大文字変換
         CMPA    #$60
         BGE     SUB20
+; 英大文字はそのまま出力
         CMPA    #$40
         BGE     ECHO1
+; 特殊記号はリバースキャラへ変更
         CMPA    #$20
         BGE     ADD40
         BRA     ECHO1
