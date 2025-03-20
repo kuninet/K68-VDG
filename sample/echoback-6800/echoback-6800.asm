@@ -16,6 +16,7 @@ SPC             EQU     $60
 ESC             EQU     $1B
 CR              EQU     $0D
 CURSOR          EQU     $CF
+BS              EQU     $08
 ;
 CHAR_A          EQU     $40
 CHAR_UNS        EQU     $5F
@@ -26,8 +27,8 @@ CHAR_END        EQU     $7F
 VDG_MODE        EQU     %00000000
 VDG_CTL_AD      EQU     $8110
 ;
-CONIN           EQU     $E75D
-CONOUT          EQU     $E76E
+CONIN           EQU     $FFA0
+CONOUT          EQU     $FF90
 
 MAIN:
         LDX     #VRAM_TOP
@@ -93,6 +94,8 @@ ECHO_END:
 VRAM_OUT:
         CMPA    #CR
         BEQ     VRAM_CR
+        CMPA    #BS
+        BEQ     BS_RTN
 ;
         LDX     WK_VRAM
         STAA    0,X
@@ -102,6 +105,18 @@ VRAM_OUT:
         STX     WK_VRAM
         CPX     #VRAM_END       ; 画面右下まできた?
         BNE     VRAM_OUT_END
+;
+; BS処理
+;
+BS_RTN:
+        LDX     WK_VRAM
+        DEX
+        LDAA    #CURSOR
+        STAA    0,X
+        LDAA    #SPC
+        STAA    1,X
+        STX     WK_VRAM
+        BRA     VRAM_OUT_END
 ;
 ; スクロール処理
 ;
