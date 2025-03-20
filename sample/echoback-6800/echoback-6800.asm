@@ -89,6 +89,19 @@ ECHO1:
 ECHO_END:
         RTS
 ;
+; BS処理
+;
+BS_RTN:
+        CPX     #VRAM_TOP
+        BEQ     VRAM_OUT_END
+;
+        JSR     CLR_CURSOR
+        LDX     WK_VRAM
+        DEX
+        STX     WK_VRAM
+        JSR     DISP_CURSOR
+        BRA     VRAM_OUT_END
+;
 ; VRAM出力ルーチン
 ;
 VRAM_OUT:
@@ -105,18 +118,6 @@ VRAM_OUT:
         STX     WK_VRAM
         CPX     #VRAM_END       ; 画面右下まできた?
         BNE     VRAM_OUT_END
-;
-; BS処理
-;
-BS_RTN:
-        LDX     WK_VRAM
-        DEX
-        LDAA    #CURSOR
-        STAA    0,X
-        LDAA    #SPC
-        STAA    1,X
-        STX     WK_VRAM
-        BRA     VRAM_OUT_END
 ;
 ; スクロール処理
 ;
